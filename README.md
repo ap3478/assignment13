@@ -1,264 +1,276 @@
 # 📦 Project Setup
 
----
+# FastAPI Calculator with Authentication & Database
 
-# 🧩 1. Install Homebrew (Mac Only)
+A full-stack calculator API built with FastAPI, PostgreSQL, and JWT authentication. Supports BREAD (Browse, Read, Edit, Add, Delete) operations on calculations, user registration/login, and polymorphic calculation models stored in a database.
 
-> Skip this step if you're on Windows.
+## Prerequisites
 
-Homebrew is a package manager for macOS.  
-You’ll use it to easily install Git, Python, Docker, etc.
+Before you begin, install the following tools on your machine.
 
-**Install Homebrew:**
+### 1. Python 3.9+
 
+**macOS (Homebrew):**
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-**Verify Homebrew:**
-
-```bash
-brew --version
-```
-
-If you see a version number, you're good to go.
-
----
-
-# 🧩 2. Install and Configure Git
-
-## Install Git
-
-- **MacOS (using Homebrew)**
-
-```bash
-brew install git
-```
-
-- **Windows**
-
-Download and install [Git for Windows](https://git-scm.com/download/win).  
-Accept the default options during installation.
-
-**Verify Git:**
-
-```bash
-git --version
-```
-
----
-
-## Configure Git Globals
-
-Set your name and email so Git tracks your commits properly:
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "your_email@example.com"
-```
-
-Confirm the settings:
-
-```bash
-git config --list
-```
-
----
-
-## Generate SSH Keys and Connect to GitHub
-
-> Only do this once per machine.
-
-1. Generate a new SSH key:
-
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-(Press Enter at all prompts.)
-
-2. Start the SSH agent:
-
-```bash
-eval "$(ssh-agent -s)"
-```
-
-3. Add the SSH private key to the agent:
-
-```bash
-ssh-add ~/.ssh/id_ed25519
-```
-
-4. Copy your SSH public key:
-
-- **Mac/Linux:**
-
-```bash
-cat ~/.ssh/id_ed25519.pub | pbcopy
-```
-
-- **Windows (Git Bash):**
-
-```bash
-cat ~/.ssh/id_ed25519.pub | clip
-```
-
-5. Add the key to your GitHub account:
-   - Go to [GitHub SSH Settings](https://github.com/settings/keys)
-   - Click **New SSH Key**, paste the key, save.
-
-6. Test the connection:
-
-```bash
-ssh -T git@github.com
-```
-
-You should see a success message.
-
----
-
-# 🧩 3. Clone the Repository
-
-Now you can safely clone the course project:
-
-```bash
-git clone <repository-url>
-cd <repository-directory>
-```
-
----
-
-# 🛠️ 4. Install Python 3.10+
-
-## Install Python
-
-- **MacOS (Homebrew)**
-
-```bash
-brew install python
-```
-
-- **Windows**
-
-Download and install [Python for Windows](https://www.python.org/downloads/).  
-✅ Make sure you **check the box** `Add Python to PATH` during setup.
-
-**Verify Python:**
-
-```bash
+brew install python@3.10
 python3 --version
 ```
-or
+
+**Windows:**
+- Download from [python.org](https://www.python.org/downloads/)
+- During install, check **"Add Python to PATH"**
+- Open a terminal and verify: `python --version`
+
+**Linux (Ubuntu/Debian):**
 ```bash
-python --version
+sudo apt update
+sudo apt install python3 python3-pip python3-venv
 ```
 
----
+### 2. Visual Studio Code
 
-## Create and Activate a Virtual Environment
+- Download from [code.visualstudio.com](https://code.visualstudio.com/)
+- Install the following extensions (search in Extensions sidebar):
+  - **Python** (by Microsoft) — IntelliSense, linting, debugging
+  - **Pylance** — type checking and auto-imports
+  - **Docker** (by Microsoft) — manage containers from VS Code
+  - **Thunder Client** or **REST Client** — test API endpoints (optional)
 
-(Optional but recommended)
+**Configure the Python interpreter in VS Code:**
+1. Open the project folder in VS Code
+2. Press `Cmd+Shift+P` (Mac) or `Ctrl+Shift+P` (Windows/Linux)
+3. Type **"Python: Select Interpreter"**
+4. Choose the one inside your `venv/` folder
+
+### 3. Docker & Docker Compose
+
+**macOS:**
+- Download [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
+- Install and start Docker Desktop from Applications
+- Verify: `docker --version` and `docker compose version`
+
+**Windows:**
+- Download [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)
+- Enable WSL 2 backend during installation if prompted
+- Verify: `docker --version` and `docker compose version`
+
+**Linux:**
+```bash
+sudo apt install docker.io docker-compose-v2
+sudo systemctl start docker
+sudo usermod -aG docker $USER   # lets you run docker without sudo (log out/in after)
+```
+
+### 4. Git
+
+**macOS:**
+```bash
+xcode-select --install   # installs git along with developer tools
+```
+
+**Windows:**
+- Download from [git-scm.com](https://git-scm.com/download/win)
+
+**Linux:**
+```bash
+sudo apt install git
+```
+
+## Project Setup
+
+### Clone the repository
+
+```bash
+git clone <your-repo-url>
+cd assignment12
+```
+
+### Create and activate a virtual environment
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
-venv\Scripts\activate.bat  # Windows
+
+# macOS / Linux
+source venv/bin/activate
+
+# Windows
+venv\Scripts\activate
 ```
 
-### Install Required Packages
+### Install dependencies
 
 ```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
----
+### Set up environment variables
 
-# 🐳 5. (Optional) Docker Setup
+Create a `.env` file in the project root:
 
-> Skip if Docker isn't used in this module.
-
-## Install Docker
-
-- [Install Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
-- [Install Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)
-
-## Build Docker Image
-
-```bash
-docker build -t <image-name> .
+```
+DATABASE_URL=postgresql://postgres:postgres@localhost:5435/fastapi_db
+JWT_SECRET_KEY=super-secret-key-for-jwt-min-32-chars
+JWT_REFRESH_SECRET_KEY=super-refresh-secret-key-min-32-chars
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
+BCRYPT_ROUNDS=12
 ```
 
-## Run Docker Container
+> **Note:** When running inside Docker, `DATABASE_URL` uses `db:5432` (the container network). When running locally on your machine, it uses `localhost:5435` (the host-mapped port). The `.env` file is for local development.
+
+## Running the Application
+
+### Option A — Run everything with Docker (recommended)
 
 ```bash
-docker run -it --rm <image-name>
+docker compose up --build
 ```
 
----
+This starts three services:
+- **web** — FastAPI app at `http://localhost:8000`
+- **db** — PostgreSQL database (host port 5435 → container port 5432)
+- **pgadmin** — Database admin UI at `http://localhost:5052`
 
-# 🚀 6. Running the Project
+To stop:
+```bash
+docker compose down
+```
 
-- **Without Docker**:
+To stop and wipe database data:
+```bash
+docker compose down -v
+```
+
+### Option B — Run locally (database in Docker)
+
+Start only the database:
+```bash
+docker compose up -d db
+```
+
+Run the FastAPI app from your terminal:
+```bash
+source venv/bin/activate
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+## Using Swagger UI
+
+FastAPI generates interactive API documentation automatically. Open your browser and go to:
+
+```
+http://localhost:8000/docs
+```
+
+### Step 1 — Register a user
+
+1. In Swagger UI, expand **POST /auth/register**
+2. Click **"Try it out"**
+3. Enter a JSON body like:
+   ```json
+   {
+     "username": "testuser",
+     "email": "test@example.com",
+     "password": "",
+     "confirm_password": "",
+     "first_name": "Test",
+     "last_name": "User"
+   }
+   ```
+4. Click **"Execute"**
+5. You should see a `201 Created` response with the user details
+
+### Step 2 — Log in and get a token
+
+1. Click the **Authorize** button (lock icon at the top right of the page)
+2. Enter your `username` and `password`
+3. Click **"Authorize"**, then **"Close"**
+4. Swagger will now include your Bearer token in all subsequent requests
+
+Alternatively, use the **POST /auth/login** endpoint directly:
+1. Expand **POST /auth/login**
+2. Click **"Try it out"**
+3. Enter:
+   ```json
+   {
+     "username": "testuser",
+     "password": ""
+   }
+   ```
+4. Click **"Execute"**
+5. Copy the `access_token` from the response
+
+### Step 3 — Create a calculation
+
+1. Expand **POST /calculations**
+2. Click **"Try it out"**
+3. Enter:
+   ```json
+   {
+     "type": "addition",
+     "inputs": [10, 5, 3]
+   }
+   ```
+4. Click **"Execute"**
+5. You should see a `201 Created` response with:
+   ```json
+   {
+     "id": "some-uuid-here",
+     "type": "addition",
+     "inputs": [10, 5, 3],
+     "result": 18.0,
+     ...
+   }
+   ```
+
+Supported calculation types: `addition`, `subtraction`, `multiplication`, `division`
+
+### Step 4 — Browse, read, update, delete
+
+| Action | Method | Endpoint | Description |
+|--------|--------|----------|-------------|
+| Browse | GET | `/calculations` | List all your calculations |
+| Read | GET | `/calculations/{id}` | Get a specific calculation by UUID |
+| Edit | PUT | `/calculations/{id}` | Update inputs and recompute result |
+| Delete | DELETE | `/calculations/{id}` | Remove a calculation |
+
+## Using pgAdmin
+
+1. Open `http://localhost:5052`
+2. Log in with `admin@example.com` / `admin`
+3. Register a new server:
+   - **Host:** `db`
+   - **Port:** `5432`
+   - **Username:** `postgres`
+   - **Password:** ``
+4. Navigate to **fastapi_db → Schemas → public → Tables** to see `users` and `calculations`
+
+> **Important:** Use host `db` (not `localhost`) because pgAdmin runs inside Docker on the same network as Postgres.
+
+## Running Tests
+
+### Unit tests
 
 ```bash
-python main.py
+source venv/bin/activate
+pytest tests/unit/ -v
 ```
 
-(or update this if the main script is different.)
-
-- **With Docker**:
+### Integration tests
 
 ```bash
-docker run -it --rm <image-name>
+pytest tests/integration/ -v
 ```
 
----
-
-# 📝 7. Submission Instructions
-
-After finishing your work:
+### E2E tests (requires Playwright browsers)
 
 ```bash
-git add .
-git commit -m "Complete Module X"
-git push origin main
+playwright install chromium
+pytest tests/e2e/ -v
 ```
 
-Then submit the GitHub repository link as instructed.
+### All tests with coverage
 
----
-
-# 🔥 Useful Commands Cheat Sheet
-
-| Action                         | Command                                          |
-| ------------------------------- | ------------------------------------------------ |
-| Install Homebrew (Mac)          | `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
-| Install Git                     | `brew install git` or Git for Windows installer |
-| Configure Git Global Username  | `git config --global user.name "Your Name"`      |
-| Configure Git Global Email     | `git config --global user.email "you@example.com"` |
-| Clone Repository                | `git clone <repo-url>`                          |
-| Create Virtual Environment     | `python3 -m venv venv`                           |
-| Activate Virtual Environment   | `source venv/bin/activate` / `venv\Scripts\activate.bat` |
-| Install Python Packages        | `pip install -r requirements.txt`               |
-| Build Docker Image              | `docker build -t <image-name> .`                |
-| Run Docker Container            | `docker run -it --rm <image-name>`               |
-| Push Code to GitHub             | `git add . && git commit -m "message" && git push` |
-
----
-
-# 📋 Notes
-
-- Install **Homebrew** first on Mac.
-- Install and configure **Git** and **SSH** before cloning.
-- Use **Python 3.10+** and **virtual environments** for Python projects.
-- **Docker** is optional depending on the project.
-
----
-
-# 📎 Quick Links
-
-- [Homebrew](https://brew.sh/)
-- [Git Downloads](https://git-scm.com/downloads)
-- [Python Downloads](https://www.python.org/downloads/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [GitHub SSH Setup Guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+```bash
+pytest --cov=app --cov-report=term-missing
